@@ -1,30 +1,63 @@
-name: Backend CI
+
+name: Deploy Publication Site
 
 on:
   push:
-    branches: [master]
-  pull_request:
-    branches: [master]
+    branches:
+      - master
 
 jobs:
-  test:
+  deploy:
+    name: Deployment Pipeline
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Setup NodeJS
         uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: npm
+          node-version: '26'
+          cache: 'npm'
 
-      - name: Install dependencies
+      - name: Install backend dependencies
         run: npm ci
 
-      - name: Run tests
+      - name: Run unit tests
         run: npm test -- --runInBand
-        # env:
-        #   NODE_ENV: test
-        #   JWT_SECRET: test-secret
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+
+      - name: Deploy to VPS
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            set -e
+
+            # Load NVM and use Node 26
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm use 26.13.0
+
+            echo "Using Node version: $(node -v)"
+            echo "Using NPM version: $(npm -v)"
+
+            cd /home/binga/apps/Skirill-Publication-Site
+
+            echo "Pulling latest code..."
+            git remote set-url origin git@github.com:DevBingaCodes/Skirill-Publication-Site.git
+            git pull --ff-only origin master
+
+            echo "Installing backend dependencies..."
+            npm ci --omit=dev
+
+            echo "Restarting PM2..."
+            pm2 restart "Publication Site" --update-env
+
+            pm2 save
+
+            echo "Deployment complete!"
+          EOF
