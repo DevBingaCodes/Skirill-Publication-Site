@@ -18,14 +18,20 @@ if (process.env.RENDER === "true") app.set("trust proxy", 1);
 app.use(express.json())
 
 //Cors
-const allowedOrigins = [
-  ...(process.env.NODE_ENV !== "production"
-    ? ["http://localhost:5173", "http://localhost:5174"]
-    : []),
-  "https://skirill.org",
-  "https://www.skirill.org",
-  "https://admin.skirill.org"
+const isProduction = process.env.NODE_ENV === "production";
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://127.0.0.1:5173",
+
+  ...(isProduction
+    ? [
+        "https://skirill.org",
+        "https://www.skirill.org",
+        "https://admin.skirill.org"
+      ]
+    : [])
 ];
 
 
