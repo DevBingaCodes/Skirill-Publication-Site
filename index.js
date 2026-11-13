@@ -6,6 +6,9 @@ const articleRoute = require("./routes/article")
 const profileRoute = require("./routes/profile")
 const metricsRoute = require("./routes/metrics")
 
+//Prometheus HTTP instrumentation
+const { trackHttpRequests } = require("./controllers/metrics")
+
 //Import PG
 require("./config/db")
 
@@ -14,6 +17,9 @@ const app = express()
 // Render terminates HTTPS at its reverse proxy. Trust that single hop so
 // authentication rate limits use the forwarded client address.
 if (process.env.RENDER === "true") app.set("trust proxy", 1);
+
+// Track incoming HTTP requests.
+app.use(trackHttpRequests);
 
 app.use(express.json())
 
