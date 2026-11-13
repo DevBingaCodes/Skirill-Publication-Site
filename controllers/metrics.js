@@ -1,75 +1,78 @@
 
-const client = require('@prometheus-io/client');
+const {
+    collectDefaultMetrics,
+    Counter,
+    Histogram,
+    register,
+} = require("@prometheus-io/client");
 
-const register = new client.Registry();
+// Collect Node.js and process metrics.
+collectDefaultMetrics();
 
-// Automatically collect Node.js and process metrics.
-client.collectDefaultMetrics({ register });
-
-// HTTP request counter
-const httpRequestCounter = new client.Counter({
+// Total HTTP requests.
+const httpRequests = new Counter({
     name: "http_requests_total",
-    help: "Total number of completed HTTP requests",
-    labelNames: ["method", "route", "status_code"],
-    registers: [register],
+    help: "Total number of HTTP requests handled by the API.",
+    labelNames: ["method", "status_code"],
 });
 
-// HTTP request duration histogram
-const httpRequestDuration = new client.Histogram({
+// HTTP request duration.
+const httpRequestDuration = new Histogram({
     name: "http_request_duration_seconds",
-    help: "HTTP request duration in seconds",
-    labelNames: ["method", "route", "status_code"],
+    help: "HTTP request duration in seconds.",
+    labelNames: ["method"],
     buckets: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10],
-    registers: [register],
 });
+
+// HTTP instrumentation middleware.
 
 function trackHttpRequests(req, res, next) {
 
-    // Exclude Prometheus scrapes from application traffic.
-    const path = req.path.replace(/\/+$/, "") || "/";
+    const path = req.path;
 
-    if (
-        path === "/publication-site/v1/metrics" ||
-        path.startsWith("/publication-site/v1/metrics/")
-    ) {
+    // Exclude Prometheus scrapes.
+    if (path === "/publication-site/v1/metrics") {
         return next();
     }
 
-    const start = process.hrtime.bigint();
+    console.log("[METRICS] Middleware reached:", req.method, req.originalUrl);
 
-    res.once("finish", () => {
+    const endTimer = httpRequestDuration.startTimer({
+        method: req.method,
+    });
 
-        // Use Express route templates to avoid high-cardinality labels.
-        const route = req.route
-            ? String(req.route.path)
-            : "unmatched";
+    res.on("finish", () => {
 
-        const labels = {
+        console.log(
+            "[METRICS] Response finished:",
+            req.method,
+            req.originalUrl,
+            res.statusCode
+        );
+
+        httpRequests.inc({
             method: req.method,
-            route,
             status_code: String(res.statusCode),
-        };
+        });
 
-        // Increment completed HTTP requests.
-        httpRequestCounter.inc(labels);
+        endTimer();
 
-        // Record request duration in seconds.
-        const duration =
-            Number(process.hrtime.bigint() - start) / 1e9;
-
-        httpRequestDuration.observe(labels, duration);
+        console.log(
+            "[METRICS] Counter incremented:",
+            req.method,
+            res.statusCode
+        );
     });
 
     next();
 }
 
+
+// Prometheus scrape handler.
 async function getMetrics(req, res) {
     try {
-        const metrics = await register.metrics();
-
         res.set("Content-Type", register.contentType);
-        res.end(metrics);
-
+        res.end(await register.metrics());
     } catch (error) {
         console.error("Metrics collection error:", error);
         res.status(500).send("Unable to collect metrics");
@@ -77,7 +80,7 @@ async function getMetrics(req, res) {
 }
 
 module.exports = {
-    httpRequestCounter,
+    httpRequests,
     httpRequestDuration,
     trackHttpRequests,
     getMetrics,

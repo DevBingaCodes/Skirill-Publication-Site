@@ -18,8 +18,7 @@ const app = express()
 // authentication rate limits use the forwarded client address.
 if (process.env.RENDER === "true") app.set("trust proxy", 1);
 
-// Track incoming HTTP requests.
-app.use(trackHttpRequests);
+app.use(trackHttpRequests) // Prometheus HTTP instrumentation middlewares
 
 app.use(express.json())
 
@@ -52,6 +51,8 @@ const corsOptions = {
   },
   credentials: true,
 };
+
+
 
 app.use((req, res, next) => {
   console.log({
