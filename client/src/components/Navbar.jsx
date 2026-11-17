@@ -31,7 +31,7 @@ function Navbar() {
 
                 {/* RIGHT (DESKTOP BUTTONS) */}
                 <div className="hidden md:flex items-center gap-3">
-                    <Link className="px-4 py-2 border border-emerald-800 text-emerald-800 text-xs font-semibold rounded-sm hover:bg-emerald-50">
+                    <Link to="/newsletter/subscribe" className="px-4 py-2 border border-emerald-800 text-emerald-800 text-xs font-semibold rounded-sm hover:bg-emerald-50">
                         Subscribe
                     </Link>
                     <Link to="/articles" className="px-4 py-2 bg-emerald-800 text-white text-xs font-semibold rounded-sm hover:bg-emerald-900">

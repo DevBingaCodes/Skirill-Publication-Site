@@ -81,7 +81,7 @@ app.use("/publication-site/v1/auth", authRoute);
 app.use("/publication-site/v1/article", articleRoute)
 app.use("/publication-site/v1/profile", profileRoute)
 app.use("/publication-site/v1/metrics", metricsRoute)
-app.use("/publication-site/v1/subscribe-newsletter", subscribeRoute)
+app.use("/publication-site/v1/newsletter", subscribeRoute)
 
 // Start the server
 if (process.env.NODE_ENV !== "test") {

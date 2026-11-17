@@ -1,4 +1,5 @@
-const SibApiV3Sdk = require("sib-api-v3-sdk")
+const SibApiV3Sdk = require("sib-api-v3-sdk");
+const axios = require("axios");
 
 const defaultClient = SibApiV3Sdk.ApiClient.instance;
 
@@ -94,6 +95,65 @@ const passwordResetEmail = async (email, token) => {
 };
 
 //Subscription Verification Email
-// const newslletterVerificationEmail = async (email, token) => {
+const newsletterVerificationEmail = async (email, token) => {
+  const verificationUrl = `${process.env.FRONTEND_URL}/newsletter/verify-email?token=${token}`;
 
-module.exports = { passwordResetEmail }
+  const payload = {
+    sender: {
+      name: process.env.BREVO_SENDER_NAME,
+      email: process.env.BREVO_SENDER_EMAIL,
+    },
+    to: [{ email }],
+    subject: "Verify your subscription to Skirill Newsletter",
+    htmlContent: `
+            <!DOCTYPE html>
+            <html>
+            <body>
+                <h2>Confirm your subscription</h2>
+
+                <p>
+                    Thanks for subscribing to our publication.
+                    Confirm your email address to receive our
+                    weekly publications.
+                </p>
+
+                <a href="${verificationUrl}">
+                    Confirm my subscription
+                </a>
+
+                <p>This link expires in 24 hours.</p>
+
+                <p>
+                    If you didn't request this subscription,
+                    you can safely ignore this email.
+                </p>
+            </body>
+            </html>
+        `,
+    textContent: `
+            Thanks for subscribing!
+
+            Confirm your email:
+            ${verificationUrl}
+
+            This link expires in 24 hours.
+        `,
+  };
+
+  const response = await axios.post(
+    "https://api.brevo.com/v3/smtp/email",
+    payload,
+    {
+      headers: {
+        "api-key": process.env.BREVO_API_KEY,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      timeout: 15000,
+    },
+  );
+
+  return response.data;
+};
+
+module.exports = { passwordResetEmail, newsletterVerificationEmail };
