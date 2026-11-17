@@ -93,4 +93,7 @@ const passwordResetEmail = async (email, token) => {
   }
 };
 
+//Subscription Verification Email
+// const newslletterVerificationEmail = async (email, token) => {
+
 module.exports = { passwordResetEmail }

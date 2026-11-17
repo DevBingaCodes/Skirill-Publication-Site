@@ -5,6 +5,7 @@ const authRoute = require("./routes/auth");
 const articleRoute = require("./routes/article")
 const profileRoute = require("./routes/profile")
 const metricsRoute = require("./routes/metrics")
+const subscribeRoute = require("./routes/subscribe")
 
 //Prometheus HTTP instrumentation
 const { trackHttpRequests } = require("./controllers/metrics")
@@ -29,6 +30,7 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
   "http://127.0.0.1:5173",
+  "http://127.0.0.1:5174",
 
   ...(isProduction
     ? [
@@ -79,6 +81,7 @@ app.use("/publication-site/v1/auth", authRoute);
 app.use("/publication-site/v1/article", articleRoute)
 app.use("/publication-site/v1/profile", profileRoute)
 app.use("/publication-site/v1/metrics", metricsRoute)
+app.use("/publication-site/v1/subscribe-newsletter", subscribeRoute)
 
 // Start the server
 if (process.env.NODE_ENV !== "test") {

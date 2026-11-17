@@ -64,8 +64,44 @@ function Article() {
     // Loading State
     if (!article) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
-                <p className="text-slate-600 text-lg">Loading article...</p>
+            <div className="min-h-screen flex flex-col bg-background-light text-slate-900 font-display" aria-busy="true">
+                <Navbar />
+
+                <main className="flex-grow py-8 sm:py-10 lg:py-12 px-4 sm:px-6 animate-pulse" aria-label="Loading article">
+                    <span className="sr-only">Loading article</span>
+
+                    <header className="max-w-4xl mx-auto mb-8 sm:mb-10">
+                        <div className="flex items-center gap-2 mb-4 sm:mb-6">
+                            <div className="h-6 w-28 rounded-full bg-slate-200" />
+                            <div className="h-4 w-32 rounded bg-slate-200" />
+                        </div>
+
+                        <div className="space-y-3">
+                            <div className="h-8 sm:h-10 w-full max-w-3xl rounded bg-slate-200" />
+                            <div className="h-8 sm:h-10 w-2/3 rounded bg-slate-200" />
+                        </div>
+
+                        <div className="mt-6 flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-slate-200" />
+                            <div className="h-4 w-36 rounded bg-slate-200" />
+                        </div>
+                    </header>
+
+                    <div className="max-w-4xl mx-auto mb-10 sm:mb-14 lg:mb-16">
+                        <div className="aspect-video w-full rounded-lg sm:rounded-xl bg-slate-200" />
+                    </div>
+
+                    <section className="max-w-4xl mx-auto px-0 sm:px-2 lg:px-0 space-y-4">
+                        <div className="h-4 w-full rounded bg-slate-200" />
+                        <div className="h-4 w-full rounded bg-slate-200" />
+                        <div className="h-4 w-5/6 rounded bg-slate-200" />
+                        <div className="h-4 w-full rounded bg-slate-200 mt-8" />
+                        <div className="h-4 w-full rounded bg-slate-200" />
+                        <div className="h-4 w-3/4 rounded bg-slate-200" />
+                    </section>
+                </main>
+
+                <Footer />
             </div>
         )
     }
@@ -118,13 +154,6 @@ function Article() {
                                 {article.display_name}
                             </span>
                         </div>
-
-                        <span className="hidden sm:block text-slate-300">|</span>
-
-                        <div className="text-sm italic text-slate-500">
-                            8 min read
-                        </div>
-
                     </div>
 
                 </header>

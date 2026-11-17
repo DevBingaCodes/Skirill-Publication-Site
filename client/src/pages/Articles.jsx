@@ -52,6 +52,7 @@ function Articles() {
       const response = await axios.get(
         `${endpoint}/article/articles?${params.toString()}`
       )
+      // console.log("Fetched Articles:", response.data.articles)
 
       setArticles(response.data.articles)
       setTotalPages(response.data.totalPages)
