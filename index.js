@@ -15,9 +15,6 @@ require("./config/db")
 
 const app = express()
 
-// Render terminates HTTPS at its reverse proxy. Trust that single hop so
-// authentication rate limits use the forwarded client address.
-if (process.env.RENDER === "true") app.set("trust proxy", 1);
 
 app.use(trackHttpRequests) // Prometheus HTTP instrumentation middlewares
 
