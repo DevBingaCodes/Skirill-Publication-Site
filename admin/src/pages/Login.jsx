@@ -73,6 +73,16 @@ function Login() {
 
             const data = await response.json();
 
+            if (data.message === "You are already logged in.") {
+                updateToast(toastId, {
+                    type: "success",
+                    title: "Already Signed In",
+                    message: "Redirecting to dashboard..."
+                });
+                navigate("/home", { replace: true });
+                return;
+            }
+
             if (!response.ok) {
                 throw new Error(data.message || "Login failed");
             }
