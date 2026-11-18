@@ -154,8 +154,77 @@ function Profile() {
     // Loading State
     if (!profile) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
-                <p className="text-slate-600 text-lg">Loading profile...</p>
+            <div className="min-h-screen flex flex-col" aria-busy="true" aria-label="Loading profile">
+                <Navbar />
+
+                <main className="flex-grow">
+                    <div className="max-w-6xl mx-auto px-6 py-10 animate-pulse">
+                        <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 pb-8 border-b border-slate-200">
+                            <div className="space-y-3">
+                                <div className="h-7 w-48 rounded bg-slate-200" />
+                                <div className="h-4 w-80 max-w-full rounded bg-slate-100" />
+                            </div>
+                            <div className="h-10 w-32 rounded-sm bg-slate-200" />
+                        </header>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+                            <aside className="lg:col-span-4">
+                                <section className="bg-white border border-slate-200 rounded-sm p-6 text-center">
+                                    <div className="w-32 h-32 rounded-full bg-slate-200 mx-auto" />
+                                    <div className="mt-6 space-y-3">
+                                        <div className="h-4 w-2/3 rounded bg-slate-200 mx-auto" />
+                                        <div className="h-3 w-1/2 rounded bg-slate-100 mx-auto" />
+                                        <div className="h-3 w-3/4 rounded bg-slate-100 mx-auto" />
+                                    </div>
+                                </section>
+                            </aside>
+
+                            <div className="lg:col-span-8 space-y-10">
+                                <section>
+                                    <div className="h-6 w-40 rounded bg-slate-200 mb-6" />
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="space-y-3">
+                                            <div className="h-4 w-24 rounded bg-slate-200" />
+                                            <div className="h-4 w-3/4 rounded bg-slate-100" />
+                                        </div>
+                                        <div className="space-y-3">
+                                            <div className="h-4 w-20 rounded bg-slate-200" />
+                                            <div className="h-4 w-2/3 rounded bg-slate-100" />
+                                        </div>
+                                        <div className="md:col-span-2 space-y-3">
+                                            <div className="h-4 w-16 rounded bg-slate-200" />
+                                            <div className="h-4 w-full rounded bg-slate-100" />
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <section className="border-t border-slate-100 pt-10">
+                                    <div className="h-6 w-24 rounded bg-slate-200 mb-6" />
+                                    <div className="space-y-3">
+                                        <div className="h-4 w-full rounded bg-slate-100" />
+                                        <div className="h-4 w-5/6 rounded bg-slate-100" />
+                                        <div className="h-4 w-2/3 rounded bg-slate-100" />
+                                        <div className="h-20 w-full rounded bg-slate-100 mt-4" />
+                                    </div>
+                                </section>
+
+                                <section className="border-t border-slate-100 pt-10">
+                                    <div className="h-6 w-48 rounded bg-slate-200 mb-6" />
+                                    <div className="space-y-4">
+                                        {[0, 1, 2].map((item) => (
+                                            <div key={item} className="flex items-center gap-4">
+                                                <div className="w-10 h-10 rounded-sm bg-slate-100 border border-slate-200" />
+                                                <div className="h-4 w-2/3 rounded bg-slate-100" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+
+                <Footer />
             </div>
         )
     }

@@ -54,7 +54,7 @@ function Home() {
     return (
         <div className="min-h-screen flex flex-col">
             <Navbar />
-            <main className="flex-grow">
+            <main className="flex-grow" aria-busy={loading}>
                 <div className="max-w-6xl mx-auto px-6 py-10">
                     {/* Page Heading */}
                     <header className="mb-10">
@@ -74,7 +74,15 @@ function Home() {
                     {/* Stats Cards */}
                     <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
 
-                        {stats.map((stat, index) => (
+                        {loading ? Array.from({ length: 4 }).map((_, index) => (
+                            <div
+                                key={index}
+                                className="bg-white border border-slate-200 p-6 rounded-lg animate-pulse"
+                            >
+                                <div className="h-3 w-24 rounded bg-slate-200" />
+                                <div className="h-9 w-16 rounded bg-slate-100 mt-3" />
+                            </div>
+                        )) : stats.map((stat, index) => (
 
                             <div
                                 key={index}
@@ -106,6 +114,18 @@ function Home() {
                         </h2>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                            {loading && Array.from({ length: 1 }).map((_, index) => (
+                                <div
+                                    key={`action-skeleton-${index}`}
+                                    className="p-6 bg-white border border-slate-200 rounded-lg animate-pulse"
+                                >
+                                    <div className="w-12 h-12 rounded-lg bg-slate-100 mb-4" />
+                                    <div className="h-5 w-3/5 rounded bg-slate-200 mb-2" />
+                                    <div className="h-3 w-full rounded bg-slate-100 mb-2" />
+                                    <div className="h-3 w-4/5 rounded bg-slate-100" />
+                                </div>
+                            ))}
 
                             {/* Publish / Complete Profile */}
                             {!loading && dashboard?.profile && (
@@ -266,7 +286,24 @@ function Home() {
                                     </thead>
 
                                     <tbody className="divide-y divide-slate-100">
-                                        {dashboard?.recentArticles?.length > 0 ? (
+                                        {loading ? (
+                                            Array.from({ length: 5 }).map((_, index) => (
+                                                <tr key={`article-skeleton-${index}`} className="animate-pulse">
+                                                    <td className="px-6 py-4">
+                                                        <div className="h-4 w-3/4 rounded bg-slate-100" />
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="h-4 w-20 rounded bg-slate-100" />
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="h-6 w-16 rounded-lg bg-slate-100" />
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="h-4 w-28 rounded bg-slate-100" />
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        ) : dashboard?.recentArticles?.length > 0 ? (
                                             dashboard.recentArticles.map((article) => (
                                                 <tr
                                                     key={article.id}
